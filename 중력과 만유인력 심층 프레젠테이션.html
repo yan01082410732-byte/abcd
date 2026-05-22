@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>登录</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Noto+Serif+KR:wght@400;600&family=DM+Mono:wght@300;400&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --surface: #fafafa;
+      --border: #e8e8e8;
+      --border-focus: #1a1a1a;
+      --accent: #1a1a1a;
+      --accent-light: #f4f4f4;
+      --text: #1a1a1a;
+      --muted: #999;
+      --error: #d0453a;
+      --success: #2d7a4f;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 440px;
+      padding: 24px;
+      animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 语言切换 */
+    .lang-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-bottom: 48px;
+    }
+
+    .lang-btn {
+      background: none;
+      border: 1px solid transparent;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .lang-btn:hover { color: var(--text); border-color: var(--border); }
+    .lang-btn.active {
+      color: var(--text);
+      border-color: var(--accent);
+      background: var(--accent-light);
+    }
+
+    /* 头部 */
+    .head { margin-bottom: 40px; }
+
+    .site-tag {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .zh h1 { font-family: 'Noto Serif SC', serif; }
+    .kr h1 { font-family: 'Noto Serif KR', serif; }
+    .en h1 { font-family: 'Playfair Display', serif; }
+
+    .subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* 表单 */
+    .field { margin-bottom: 20px; }
+
+    .field label {
+      display: block;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-bottom: 2px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      padding: 12px 0;
+      outline: none;
+      transition: border-color 0.2s;
+      border-radius: 0;
+      -webkit-appearance: none;
+    }
+
+    .field input:focus {
+      border-color: transparent;
+      border-bottom-color: var(--accent);
+    }
+
+    .field input::placeholder { color: #ccc; }
+
+    /* 选项行 */
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      font-size: 11px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .remember input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .remember input[type="checkbox"]:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .remember input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 4px;
+      width: 4px; height: 7px;
+      border-right: 1.5px solid #fff;
+      border-bottom: 1.5px solid #fff;
+      transform: rotate(45deg);
+    }
+
+    .forgot {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.15s;
+      font-size: 11px;
+    }
+    .forgot:hover { color: var(--text); }
+
+    /* 按钮 */
+    .btn {
+      width: 100%;
+      padding: 15px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:hover { opacity: 0.82; }
+    .btn:active { transform: scale(0.99); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* 分割线 */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 28px 0;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .register {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .register a {
+      color: var(--text);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      margin-left: 4px;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(72px);
+      background: var(--text);
+      color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      padding: 11px 22px;
+      letter-spacing: 0.06em;
+      transition: transform 0.38s cubic-bezier(0.16,1,0.3,1);
+      white-space: nowrap;
+      z-index: 99;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.ok { background: var(--success); }
+    .toast.err { background: var(--error); }
+
+    /* 底部装饰线 */
+    .bottom-line {
+      width: 32px;
+      height: 2px;
+      background: var(--accent);
+      margin: 36px auto 0;
+    }
+
+    @media (max-width: 480px) {
+      .wrapper { padding: 20px; }
+      h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="wrapper zh" id="app">
+  <!-- 语言切换 -->
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('zh')">中文</button>
+    <button class="lang-btn" onclick="setLang('kr')">한국어</button>
+    <button class="lang-btn" onclick="setLang('en')">EN</button>
+  </div>
+
+  <!-- 头部 -->
+  <div class="head">
+    <div class="site-tag" id="t-tag">系统入口</div>
+    <h1 id="t-title">欢迎回来</h1>
+    <p class="subtitle" id="t-sub">请输入您的账户信息以继续访问</p>
+  </div>
+
+  <!-- 表单 -->
+  <div class="field">
+    <label id="t-email">账户 / 邮箱</label>
+    <input type="text" id="username" placeholder="your@email.com" autocomplete="username"/>
+  </div>
+
+  <div class="field">
+    <label id="t-pass">密码</label>
+    <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
+  </div>
+
+  <div class="options">
+    <label class="remember">
+      <input type="checkbox" id="remember"/>
+      <span id="t-remember">记住我</span>
+    </label>
+    <a href="#" class="forgot" id="t-forgot">忘记密码？</a>
+  </div>
+
+  <button class="btn" id="loginBtn" onclick="handleLogin()">
+    <span id="t-btn">登&ensp;录</span>
+  </button>
+
+  <div class="divider"><span id="t-or">或者</span></div>
+
+  <div class="register">
+    <span id="t-reg">还没有账户？</span><a href="#" id="t-reg-link">立即注册</a>
+  </div>
+
+  <div class="bottom-line"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const i18n = {
+    zh: {
+      tag: '系统入口', title: '欢迎回来', sub: '请输入您的账户信息以继续访问',
+      email: '账户 / 邮箱', pass: '密码', remember: '记住我', forgot: '忘记密码？',
+      btn: '登&ensp;录', or: '或者', reg: '还没有账户？', regLink: '立即注册',
+      errEmpty: '⚠  请填写所有字段', errShort: '⚠  密码至少 6 位',
+      loading: '验证中...', success: '✓  登录成功（演示）',
+    },
+    kr: {
+      tag: '시스템 입구', title: '다시 오신 것을\n환영합니다', sub: '계속하려면 계정 정보를 입력하세요',
+      email: '계정 / 이메일', pass: '비밀번호', remember: '로그인 유지', forgot: '비밀번호 찾기',
+      btn: '로그인', or: '또는', reg: '계정이 없으신가요?', regLink: '회원가입',
+      errEmpty: '⚠  모든 항목을 입력해주세요', errShort: '⚠  비밀번호는 6자 이상이어야 합니다',
+      loading: '확인 중...', success: '✓  로그인 성공 (데모)',
+    },
+    en: {
+      tag: 'System Portal', title: 'Welcome\nBack', sub: 'Enter your credentials to continue',
+      email: 'Account / Email', pass: 'Password', remember: 'Remember me', forgot: 'Forgot password?',
+      btn: 'Sign In', or: 'or', reg: "Don't have an account?", regLink: 'Sign up',
+      errEmpty: '⚠  Please fill in all fields', errShort: '⚠  Password must be 6+ chars',
+      loading: 'Verifying...', success: '✓  Login successful (demo)',
+    }
+  };
+
+  let lang = 'zh';
+
+  function setLang(l) {
+    lang = l;
+    const t = i18n[l];
+    const app = document.getElementById('app');
+    app.className = 'wrapper ' + l;
+
+    document.getElementById('t-tag').textContent = t.tag;
+    document.getElementById('t-title').innerHTML = t.title.replace('\n', '<br>');
+    document.getElementById('t-sub').textContent = t.sub;
+    document.getElementById('t-email').textContent = t.email;
+    document.getElementById('t-pass').textContent = t.pass;
+    document.getElementById('t-remember').textContent = t.remember;
+    document.getElementById('t-forgot').textContent = t.forgot;
+    document.getElementById('t-btn').innerHTML = t.btn;
+    document.getElementById('t-or').textContent = t.or;
+    document.getElementById('t-reg').textContent = t.reg;
+    document.getElementById('t-reg-link').textContent = t.regLink;
+
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  function showToast(msg, type) {
+    const t = document.getElementById('toast');
+    t.className = 'toast ' + (type || '');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function handleLogin() {
+    const t = i18n[lang];
+    const u = document.getElementById('username').value.trim();
+    const p = document.getElementById('password').value;
+    const btn = document.getElementById('loginBtn');
+    const btnText = document.getElementById('t-btn');
+
+    if (!u || !p) { showToast(t.errEmpty, 'err'); return; }
+    if (p.length < 6) { showToast(t.errShort, 'err'); return; }
+
+    btn.disabled = true;
+    btnText.textContent = t.loading;
+
+    setTimeout(() => {
+      btn.disabled = false;
+      btnText.innerHTML = t.btn;
+      showToast(t.success, 'ok');
+    }, 1200);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleLogin();
+  });
+</script>
+</body>
+</html>
