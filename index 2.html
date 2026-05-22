@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="kr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>StudyLink — 회원가입</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600&family=Noto+Serif+KR:wght@400;600&family=DM+Mono:wght@300;400&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--bg:#fff;--border:#e8e8e8;--text:#1a1a1a;--muted:#999;--accent:#1a1a1a;--error:#d0453a;--success:#2d7a4f}
+    body{background:var(--bg);color:var(--text);font-family:'DM Mono',monospace;min-height:100vh;display:flex;flex-direction:column}
+    nav{border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:52px}
+    .logo{font-family:'Playfair Display',serif;font-size:18px;text-decoration:none;color:var(--text)}
+    .logo span{color:#3b6ef5}
+    .lang-bar{display:flex;gap:2px}
+    .lang-btn{background:none;border:1px solid transparent;font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);padding:4px 8px;cursor:pointer;transition:all .15s}
+    .lang-btn.active{color:var(--text);border-color:var(--text);background:#f4f4f4}
+    .lang-btn:hover{color:var(--text)}
+    main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{width:100%;max-width:420px}
+    .card-top{margin-bottom:32px}
+    .card-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+    h1{font-size:28px;font-weight:600;line-height:1.2;margin-bottom:6px}
+    .zh h1{font-family:'Noto Serif SC',serif}
+    .kr h1{font-family:'Noto Serif KR',serif}
+    .en h1{font-family:'Playfair Display',serif}
+    .card-sub{font-size:12px;color:var(--muted)}
+    .field{margin-bottom:18px}
+    .field label{display:block;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+    .field input,.field select{width:100%;border:none;border-bottom:2px solid var(--border);background:transparent;font-family:'DM Mono',monospace;font-size:13px;padding:10px 0;outline:none;color:var(--text);transition:border-color .2s}
+    .field input:focus,.field select:focus{border-bottom-color:var(--accent)}
+    .field input::placeholder{color:#ccc}
+    .field select{cursor:pointer;-webkit-appearance:none;appearance:none}
+    .btn{width:100%;padding:14px;background:var(--accent);color:#fff;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;border:none;cursor:pointer;transition:opacity .2s;margin-top:8px}
+    .btn:hover{opacity:.82}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .divider{display:flex;align-items:center;gap:14px;margin:22px 0;color:var(--muted);font-size:10px;letter-spacing:0.1em}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+    .login-line{text-align:center;font-size:12px;color:var(--muted)}
+    .login-line a{color:var(--text);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+    .msg{font-size:11px;padding:10px 14px;margin-bottom:16px;display:none}
+    .msg.err{background:#fff0f0;border-left:3px solid var(--error);color:var(--error);display:block}
+    .msg.ok{background:#f0fff6;border-left:3px solid var(--success);color:var(--success);display:block}
+    .terms{font-size:10px;color:var(--muted);margin-top:14px;text-align:center;line-height:1.6}
+    footer{border-top:1px solid var(--border);padding:16px 32px;text-align:center;font-size:10px;color:#ccc}
+    @media(max-width:480px){.card{padding:0 4px}nav{padding:0 16px}}
+  </style>
+</head>
+<body class="kr">
+<nav>
+  <a class="logo" href="index.html">Study<span>Link</span></a>
+  <div class="lang-bar">
+    <button class="lang-btn" onclick="setLang('zh',this)">中文</button>
+    <button class="lang-btn active" onclick="setLang('kr',this)">한국어</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+  </div>
+</nav>
+<main>
+  <div class="card">
+    <div class="card-top">
+      <div class="card-label" id="t-label">새 계정</div>
+      <h1 id="t-title">회원가입</h1>
+      <p class="card-sub" id="t-sub">StudyLink에 오신 것을 환영합니다</p>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div class="field">
+      <label id="t-nickname">닉네임</label>
+      <input type="text" id="nickname" placeholder="studymaster99" autocomplete="nickname"/>
+    </div>
+    <div class="field">
+      <label id="t-email">이메일</label>
+      <input type="email" id="email" placeholder="your@email.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label id="t-pass">비밀번호</label>
+      <input type="password" id="password" placeholder="8자 이상" autocomplete="new-password"/>
+    </div>
+    <div class="field">
+      <label id="t-pass2">비밀번호 확인</label>
+      <input type="password" id="password2" placeholder="••••••••" autocomplete="new-password"/>
+    </div>
+    <div class="field">
+      <label id="t-role">신분</label>
+      <select id="role">
+        <option value="highschool" id="o-hs">고등학생</option>
+        <option value="university" id="o-uni">대학생</option>
+        <option value="international" id="o-int">유학생</option>
+        <option value="graduate" id="o-grad">대학원생</option>
+        <option value="other" id="o-other">기타</option>
+      </select>
+    </div>
+    <button class="btn" id="regBtn" onclick="doRegister()"><span id="t-regbtn">회원가입</span></button>
+    <div class="terms" id="t-terms">가입 시 이용약관 및 개인정보처리방침에 동의하게 됩니다</div>
+    <div class="divider"><span id="t-or">또는</span></div>
+    <div class="login-line"><span id="t-haveacc">이미 계정이 있으신가요?</span> <a onclick="window.location.href='index.html'" id="t-tologin">로그인</a></div>
+  </div>
+</main>
+<footer>© 2026 StudyLink</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL='https://scjogvlntaxruzqmynzo.supabase.co';
+const SUPA_KEY='sb_publishable_OhcblProSDX0onhai44U6g_R6g3Ekhd';
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+const T={
+  zh:{label:'创建账户',title:'立即注册',sub:'加入 StudyLink 学习社区',nickname:'昵称',email:'邮箱',pass:'密码',pass2:'确认密码',role:'身份',regbtn:'注 册',or:'或者',haveacc:'已有账户？',tologin:'立即登录',terms:'注册即代表同意使用条款及隐私政策',loading:'注册中...',errEmpty:'请填写所有字段',errPass:'两次密码不一致',errShort:'密码至少8位',ok:'注册成功！请查收验证邮件',roles:['高中生','大学生','留学生','研究生','其他']},
+  kr:{label:'새 계정',title:'회원가입',sub:'StudyLink에 오신 것을 환영합니다',nickname:'닉네임',email:'이메일',pass:'비밀번호',pass2:'비밀번호 확인',role:'신분',regbtn:'회원가입',or:'또는',haveacc:'이미 계정이 있으신가요?',tologin:'로그인',terms:'가입 시 이용약관 및 개인정보처리방침에 동의하게 됩니다',loading:'처리 중...',errEmpty:'모든 항목을 입력해주세요',errPass:'비밀번호가 일치하지 않습니다',errShort:'비밀번호는 8자 이상이어야 합니다',ok:'가입 완료! 이메일을 확인해주세요',roles:['고등학생','대학생','유학생','대학원생','기타']},
+  en:{label:'New Account',title:'Sign Up',sub:'Join the StudyLink community',nickname:'Nickname',email:'Email',pass:'Password',pass2:'Confirm Password',role:'Role',regbtn:'Create Account',or:'or',haveacc:'Already have an account?',tologin:'Log in',terms:'By signing up, you agree to our Terms and Privacy Policy',loading:'Creating account...',errEmpty:'Please fill in all fields',errPass:'Passwords do not match',errShort:'Password must be at least 8 characters',ok:'Account created! Please check your email',roles:['High School Student','University Student','International Student','Graduate Student','Other']}
+};
+let lang='kr';
+function setLang(l,btn){
+  lang=l; document.body.className=l;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const t=T[l];
+  document.getElementById('t-label').textContent=t.label;
+  document.getElementById('t-title').textContent=t.title;
+  document.getElementById('t-sub').textContent=t.sub;
+  document.getElementById('t-nickname').textContent=t.nickname;
+  document.getElementById('t-email').textContent=t.email;
+  document.getElementById('t-pass').textContent=t.pass;
+  document.getElementById('t-pass2').textContent=t.pass2;
+  document.getElementById('t-role').textContent=t.role;
+  document.getElementById('t-regbtn').textContent=t.regbtn;
+  document.getElementById('t-or').textContent=t.or;
+  document.getElementById('t-haveacc').textContent=t.haveacc;
+  document.getElementById('t-tologin').textContent=t.tologin;
+  document.getElementById('t-terms').textContent=t.terms;
+  const opts=document.querySelectorAll('#role option');
+  t.roles.forEach((r,i)=>{if(opts[i])opts[i].textContent=r});
+}
+function showMsg(txt,type){const m=document.getElementById('msg');m.textContent=txt;m.className='msg '+type}
+async function doRegister(){
+  const t=T[lang];
+  const nickname=document.getElementById('nickname').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const pass=document.getElementById('password').value;
+  const pass2=document.getElementById('password2').value;
+  const role=document.getElementById('role').value;
+  if(!nickname||!email||!pass||!pass2){showMsg(t.errEmpty,'err');return}
+  if(pass.length<8){showMsg(t.errShort,'err');return}
+  if(pass!==pass2){showMsg(t.errPass,'err');return}
+  const btn=document.getElementById('regBtn');
+  const btnTxt=document.getElementById('t-regbtn');
+  btn.disabled=true; btnTxt.textContent=t.loading;
+  const {data,error}=await sb.auth.signUp({
+    email, password:pass,
+    options:{data:{nickname,role}}
+  });
+  btn.disabled=false; btnTxt.textContent=t.regbtn;
+  if(error){showMsg(error.message,'err')}
+  else{showMsg(t.ok,'ok');setTimeout(()=>window.location.href='index.html',2500)}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
+</script>
+</body>
+</html>
